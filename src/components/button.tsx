@@ -1,8 +1,9 @@
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 
-interface ButtonProps{
-    buttonName: string,
-    type: "submit" | "button" | "reset"
+interface ButtonProps extends ComponentPropsWithoutRef<typeof motion.button>{
+    buttonName: ReactNode | string,
+    type: "submit" | "button" | "reset",
 }
 
 export const Button =({buttonName, ...props}: ButtonProps)=>{

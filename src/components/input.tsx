@@ -5,6 +5,8 @@ interface InputProps{
     type: string,
     name: string,
     placeholder: string
+    value: string,
+    onChange: (evt: React.ChangeEvent<HTMLInputElement>)=>void
 }
 export const Input =({icon: Icon, ...props}: InputProps)=>{
     return(
