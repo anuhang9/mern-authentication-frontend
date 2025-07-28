@@ -4,22 +4,23 @@ import { Button } from "../components/button";
 import { ArrowLeft, Loader, Mail } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { useAuthStore } from "../auth/authStore";
-import { Link, useNavigate } from "react-router-dom";
-export const ForgetPassword =()=>{
+import { Link } from "react-router-dom";
+export const MsgResetPassword =()=>{
 
     const [email, setEmail] = useState("");
-    const {isLoading, error, forgetpassword} = useAuthStore();
-	const navigate = useNavigate()
+    const [isSubmit, setIsSubmit] = useState<boolean>(false);
+    const {isLoading, error, forgetpassword} = useAuthStore()
 
     const handleSubmit = async(evt: FormEvent)=>{
         evt.preventDefault();
         try{
             await forgetpassword(email);
-			navigate("/thankyou")
+            setIsSubmit(true);
         }catch(error){
             console.log(error);
         }
     }
+	console.log(isSubmit)
     return(
         <motion.div
 			initial={{ opacity: 0, y: 20 }}
@@ -31,21 +32,19 @@ export const ForgetPassword =()=>{
 				<h2 className='text-3xl font-bold mb-6 text-center bg-gradient-to-r from-blue-400 to-sky-600 text-transparent bg-clip-text'>
 					Forgot Password
 				</h2>
-					<form onSubmit={handleSubmit}>
-						<p className='text-gray-300 mb-6 text-center'>
-							Enter your email address and we'll send you a link to reset your password.
+					<div className='text-center'>
+						<motion.div
+							initial={{ scale: 0 }}
+							animate={{ scale: 1 }}
+							transition={{ type: "spring", stiffness: 500, damping: 30 }}
+							className='w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4'
+						>
+							<Mail className='h-8 w-8 text-white' />
+						</motion.div>
+						<p className='text-gray-300 mb-6'>
+							If an account exists, you will receive a password reset link in your email.
 						</p>
-						<Input
-							icon={Mail}
-							type='email'
-							placeholder='Email Address'
-							value={email}
-							onChange={(evt)=>{setEmail(evt.target.value)}}
-                            name="email"
-						/>
-                        {error && <p className="text-red-500 font-semibold mt-2 ml-3">{error}</p>}
-						<Button type="submit" disabled={isLoading} buttonName={isLoading ? <Loader className="animate-spin mx-auto"/>:"Send Reset Link"}/>
-					</form>
+					</div>
 			</div>
 
 			<div className='px-8 py-4 bg-gray-900/50 flex justify-center'>

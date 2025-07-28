@@ -24,6 +24,7 @@ interface AuthState{
     login: (userName: string, password: string)=>Promise<void>;
     logout: ()=>void;
     forgetpassword: (email: string)=>Promise<void>
+    resetPassword: (resetPassword: string, token: string)=>Promise<void>
 }
 
 export const useAuthStore = create<AuthState>((set)=>({
@@ -73,10 +74,10 @@ export const useAuthStore = create<AuthState>((set)=>({
             const response = await axios.get(`${API_URL}/check-auth`, {withCredentials: true});
             set({user: response.data.user, isAuthenticated: true, isCheckingAuth: false})
         }catch(error){
-            let message = "Unknown error occurred while checking authentication.";
+            let message: string | undefined = "Unknown error occurred while checking authentication.";
 
             if (axios.isAxiosError(error)) {
-                message = error.response?.data?.message || message;
+                message = undefined;
             } else if (error instanceof Error) {
                 message = error.message;
             }
@@ -125,6 +126,23 @@ export const useAuthStore = create<AuthState>((set)=>({
         set({isLoading: true, error: null})
         try{
             const response = await axios.post(`${API_URL}/forgot-password`,{email}, {withCredentials: true})
+            set({user: response.data.user, isLoading: false, error: null})
+        }catch(error){
+            let message = "Something went wrong.";
+            if (axios.isAxiosError(error)) {
+                message = error.response?.data?.message || message;
+            } else if (error instanceof Error) {
+                message = error.message;
+            }
+            set({ error: message, isLoading: false });
+            throw new Error(message);
+        }
+    },
+    resetPassword: async (rePassword, token)=>{
+        console.log("auth", rePassword, token)
+        set({isLoading: true, error: null})
+        try{
+            const response = await axios.post(`${API_URL}/reset-password/${token}`, {rePassword}, {withCredentials: true})
             set({user: response.data.user, isLoading: false, error: null})
         }catch(error){
             let message = "Something went wrong.";

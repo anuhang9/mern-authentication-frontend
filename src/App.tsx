@@ -9,12 +9,12 @@ import { ResetPassword } from './pages/reset-password'
 import { ForgetPassword } from './pages/forget-password'
 import { useAuthStore } from './auth/authStore'
 import { useEffect, type ReactNode } from 'react'
-import { Loader } from 'lucide-react'
 import { LoadingComponent } from './components/loading'
+import { MsgResetPassword } from './pages/msg-reset-password'
 
 function App() {
   
-  const {checkauth, isCheckingAuth, error} = useAuthStore();
+  const {checkauth, isCheckingAuth} = useAuthStore();
   const ProtectRoute =({children}: {children: ReactNode})=>{
     const {isAuthenticated, user} = useAuthStore();
     if(!isAuthenticated){
@@ -28,7 +28,7 @@ function App() {
   
   const RedirectAuthenticatedUser =({children}: {children: ReactNode})=>{
     const {isAuthenticated, user} = useAuthStore()
-    console.log(isAuthenticated, user?.isVerified) 
+    // console.log(isAuthenticated, user?.isVerified) 
     if(isAuthenticated && user?.isVerified){
       return <Navigate to='/' replace />;
     }
@@ -42,9 +42,6 @@ function App() {
   if(isCheckingAuth){
     return <LoadingComponent/>
   }
-  // if(error){
-  //   return <div>error</div>
-  // }
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-gray-900 via-blue-800 to-sky-900 flex items-center justify-center relative overflow-hidden'>
@@ -77,7 +74,12 @@ function App() {
             <ForgetPassword/>
           </RedirectAuthenticatedUser>
           }/>
-        <Route path='/reset-password' element={
+          <Route path='/thankyou' element={
+            <RedirectAuthenticatedUser>
+              <MsgResetPassword/>
+            </RedirectAuthenticatedUser>
+          }/>
+        <Route path='/reset-password/:token' element={
           <RedirectAuthenticatedUser>
             <ResetPassword/>
           </RedirectAuthenticatedUser>
